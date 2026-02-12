@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>E-Dispensasi</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+background: linear-gradient(135deg,#ff1f5a,#7c3aed);
+font-family: Arial, sans-serif;
+}
+.glass{
+background: rgba(255,255,255,0.15);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(255,255,255,0.25);
+}
+.btn-gradient{
+background: linear-gradient(135deg,#ff1f5a,#7c3aed);
+}
+</style>
+
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-6">
+
+<div class="glass text-white rounded-3xl p-8 w-full max-w-md shadow-2xl">
+
+<div class="flex justify-center mb-4">
+<img src="https://smasa-magetan.sch.id/wp-content/uploads/2023/06/LOGO-SMA-NEGERI-1-MAGETAN-258x300.png"
+class="h-24">
+</div>
+
+<h2 class="text-center text-2xl font-bold mb-6">E-Dispensasi</h2>
+
+<form id="formDispensasi" class="space-y-4">
+
+<input id="nama" required placeholder="Nama Lengkap"
+class="w-full p-3 rounded-xl text-black">
+
+<select id="kelas" required class="w-full p-3 rounded-xl text-black">
+
+<option value="">Pilih Kelas</option>
+
+<optgroup label="Kelas X">
+<option>X-1</option><option>X-2</option><option>X-3</option>
+<option>X-4</option><option>X-5</option><option>X-6</option>
+<option>X-7</option><option>X-8</option><option>X-9</option>
+<option>X-10</option>
+</optgroup>
+
+<optgroup label="Kelas XI">
+<option>XI-1</option><option>XI-2</option><option>XI-3</option>
+<option>XI-4</option><option>XI-5</option><option>XI-6</option>
+<option>XI-7</option><option>XI-8</option><option>XI-9</option>
+<option>XI-10</option>
+</optgroup>
+
+<optgroup label="Kelas XII">
+<option>XII-1</option><option>XII-2</option><option>XII-3</option>
+<option>XII-4</option><option>XII-5</option><option>XII-6</option>
+<option>XII-7</option><option>XII-8</option><option>XII-9</option>
+<option>XII-10</option>
+</optgroup>
+
+</select>
+
+<input id="whatsapp" required placeholder="Nomor WhatsApp"
+class="w-full p-3 rounded-xl text-black">
+
+<textarea id="alasan" required placeholder="Alasan Dispensasi"
+class="w-full p-3 rounded-xl text-black"></textarea>
+
+<button type="submit"
+class="btn-gradient w-full py-3 rounded-xl font-bold text-white">
+Kirim Data
+</button>
+
+</form>
+
+<p id="status" class="text-center mt-4 font-bold"></p>
+
+</div>
+
+<script>
+
+// GANTI DENGAN URL WEB APP
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxg0PWS9XoLC_jI0iOHqn1jvTMwaNvMxOAQqNpeQ1jjw5GAISepShBUA7uIC9Jdrc9_/exec";
+
+function isAppsScript(){
+return typeof google !== "undefined"
+&& google.script
+&& google.script.run;
+}
+
+document.getElementById("formDispensasi").addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+const status = document.getElementById("status");
+status.innerText = "Mengirim data...";
+
+const data = {
+nama: document.getElementById("nama").value,
+kelas: document.getElementById("kelas").value,
+kontak: document.getElementById("whatsapp").value,
+alasan: document.getElementById("alasan").value
+};
+
+try{
+
+if(isAppsScript()){
+
+google.script.run
+.withSuccessHandler(()=>{
+status.innerText = "✅ Data tersimpan (Online)";
+document.getElementById("formDispensasi").reset();
+})
+.simpanData(data);
+
+}else{
+
+const res = await fetch(WEB_APP_URL,{
+method:"POST",
+body: JSON.stringify(data)
+});
+
+const result = await res.json();
+
+if(result.status==="success"){
+status.innerText = "✅ Data tersimpan (Local)";
+document.getElementById("formDispensasi").reset();
+}else{
+status.innerText = "❌ Gagal kirim";
+}
+
+}
+
+}catch(err){
+status.innerText = "❌ Error koneksi";
+}
+
+});
+
+</script>
+
+</body>
+</html>
